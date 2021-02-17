@@ -78,10 +78,10 @@ class PhotoController extends Controller {
             $originaImageName = "original_".$imageName;
             $thumbImageName = "thumb_".$imageName;
             $bigImageName = "big_".$imageName;
-            $userImageSize = $image->getClientSize();
+            $userImageSize = $image->getSize();
             $returnPath = $image->move($destinationPath, $originaImageName);
 
-            $image_resize = Image::make($returnPath);              
+            $image_resize = Image::make($returnPath);
             $image_resize->resize(300, null, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
@@ -90,7 +90,7 @@ class PhotoController extends Controller {
             $image_resize->save($destinationPath."/".$thumbImageName);
 
 
-            $image_resize = Image::make($returnPath);              
+            $image_resize = Image::make($returnPath);
             $image_resize->resize(1024, null, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
@@ -200,7 +200,7 @@ class PhotoController extends Controller {
                 }else{
                     $jsonResponse["message"] = "Unable to save";
                     $jsonResponse["code"] = 200;
-                    
+
                 }
             }else{
                 $jsonResponse["message"] = "Not found";
