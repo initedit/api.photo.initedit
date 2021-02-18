@@ -11,7 +11,3 @@
 |
 */
 
-Route::get('/', function () {
-    return response()->file(public_path("index.html"));
-});
-Route::get('/test', 'Youtube@Get');
