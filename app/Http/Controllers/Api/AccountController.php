@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App;
 
-class AccountController extends Controller {
+class AccountController extends Controller
+{
 
-    public function Authenticate(Request $request) {
+    public function Authenticate(Request $request)
+    {
         $jsonResponse = ["code" => 100, "message" => "Unknown Error"];
         if ($request->isMethod("post")) {
             $name = $request->input("name");
@@ -26,7 +28,8 @@ class AccountController extends Controller {
         return $jsonResponse;
     }
 
-    public function Info(Request $request) {
+    public function Info(Request $request)
+    {
         $jsonResponse = ["code" => 100, "message" => "Unknown Error"];
         if ($request->isMethod("post")) {
             $name = $request->input("name");
@@ -43,7 +46,8 @@ class AccountController extends Controller {
         return $jsonResponse;
     }
 
-    public function Create(Request $request) {
+    public function Create(Request $request)
+    {
         $jsonResponse = ["code" => 100, "message" => "Unknown Error"];
         if ($request->isMethod("post")) {
             $name = $request->input("name");
@@ -65,23 +69,28 @@ class AccountController extends Controller {
         return $jsonResponse;
     }
 
-    public function Delete(Request $request) {
+    public function Delete(Request $request)
+    {
         $jsonResponse = ["code" => 100, "message" => "Unknown Error"];
         if ($request->isMethod("post")) {
             $name = $request->input("name");
             $token = $request->input("token");
             if (App\Post::Exists($name, $token)) {
                 $post = App\Post::GetPost($name);
-                //TODO Also Delete all media files hold by these posts
-                App\PostSession::DeleteByPostId($post->id);
-                $post->delete();
-                $jsonResponse["message"] = "Success";
-                $jsonResponse["code"] = 200;
+                if ($post->id == $request->post->id) {
+                    //TODO Also Delete all media files hold by these posts
+                    App\PostSession::DeleteByPostId($post->id);
+                    $post->delete();
+                    $jsonResponse["message"] = "Success";
+                    $jsonResponse["code"] = 200;
+                } else {
+                    $jsonResponse["message"] = "Permision Denied.";
+                    $jsonResponse["code"] = 200;
+                }
             } else {
                 $jsonResponse["message"] = "Failed Authentication";
             }
         }
         return $jsonResponse;
     }
-
 }

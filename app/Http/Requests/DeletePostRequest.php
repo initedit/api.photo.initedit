@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\PostMeta;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Request;
 
 class DeletePostRequest extends FormRequest
 {
@@ -11,8 +15,9 @@ class DeletePostRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(Request $request)
     {
+        // return $request->post->id === PostMeta::GetById($request->get('id'))->post_id;
         return true;
     }
 
@@ -24,7 +29,7 @@ class DeletePostRequest extends FormRequest
     public function rules()
     {
         return [
-            "id"=>"required|filled"
+            "id" => "required|filled"
         ];
     }
 }

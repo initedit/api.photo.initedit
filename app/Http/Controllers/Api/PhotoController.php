@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Validator;
 use App;
 use App\Http\Requests\DeletePostRequest;
 use App\Http\Requests\DownloadPostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Validator as Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class PhotoController extends Controller
@@ -131,9 +131,15 @@ class PhotoController extends Controller
             $originalImage = public_path($postMeta->path->original);
             $thumbImage = public_path($postMeta->path->thumb);
             $bigImage = public_path($postMeta->path->big);
-            unlink($thumbImage);
-            unlink($originalImage);
-            unlink($bigImage);
+            if (file_exists($thumbImage)) {
+                unlink($thumbImage);
+            }
+            if (file_exists($originalImage)) {
+                unlink($originalImage);
+            }
+            if (file_exists($bigImage)) {
+                unlink($bigImage);
+            }
             $postMeta->delete();
             $jsonResponse["message"] = "Deleted";
             $jsonResponse["code"] = 200;
