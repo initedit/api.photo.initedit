@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App;
+use Illuminate\Support\Facades\Hash;
+
 class Post extends Model {
 
     function isViewable($token){
@@ -15,11 +17,15 @@ class Post extends Model {
         return false;
     }
     static function Exists($name, $token) {
-        $count = Post::where('name', $name)
-                ->where("password", $token)
+        $post = Post::where('name', $name)
                 ->where("status", 0)
-                ->count();
-        return $count === 1;
+                ->first();
+        if($post){
+            if(Hash::check($token,$post->password)){
+                return true;
+            }
+        }
+        return false;
     }
 
     static function GetPost($name) {
@@ -32,7 +38,7 @@ class Post extends Model {
     static function Add($name, $token, $type) {
         $post = new Post;
         $post->name = $name;
-        $post->password = $token;
+        $post->password = Hash::make($token);
         $post->status = 0;
         $post->type = $type;
         return $post->save();
