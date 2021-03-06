@@ -21,7 +21,8 @@ class PhotoAuthenticate
     {
         $token = $request->header("Authorization");
         $token = $request->header("token", $token);
-        $name = $request->header("name", "");
+        $name = $request->input('name');
+        $name = $request->header("name", $name);
         $post = Post::GetPost($name);
         $request->merge(['post' => $post]);
         if ($post) {
@@ -34,7 +35,16 @@ class PhotoAuthenticate
                     return $next($request);
                 }
             }
+        } else {
+            return response(array(
+                'code' => 404,
+                'message' => 'Album Not Found.',
+                'name'=>$name
+            ), 200);
         }
-        return $next($request);
+        return response(array(
+            'code' => 401,
+            'message' => 'Permission Denied.'
+        ), 200);
     }
 }
