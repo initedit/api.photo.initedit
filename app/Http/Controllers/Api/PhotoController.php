@@ -47,6 +47,33 @@ class PhotoController extends Controller
         return $jsonResponse;
     }
 
+    public function GetByID(Request $request, $id)
+    {
+        $jsonResponse = ["code" => 100, "message" => "Unknown Error"];
+        $rules = array();
+        $postname = $request->header("name", "");
+        $postToken = $request->header("token", "");
+        $post = App\Post::GetPost($postname);
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            $jsonResponse["message"] = $validator->errors()->first();
+        } else if ($post) {
+            if ($post->isViewable($postToken)) {
+                $jsonResponse["message"] = "Loaded";
+                $jsonResponse["code"] = 200;
+                $jsonResponse["result"] = App\PostMeta::GetByIdDetails($id);
+            } else {
+                $jsonResponse["code"] = 401;
+                $jsonResponse["message"] = "Permission Denied";
+            }
+        } else {
+            $jsonResponse["code"] = 404;
+            $jsonResponse["message"] = "Post not found";
+        }
+        return $jsonResponse;
+    }
+
     public function Upload(StorePostRequest $request)
     {
         $jsonResponse = ["code" => 100, "message" => "Unknown Error"];

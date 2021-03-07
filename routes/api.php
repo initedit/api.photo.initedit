@@ -25,3 +25,4 @@ Route::get('/photo/download', ['middleware' => ['photo.auth:read', 'photo.meta.a
 Route::post('/photo/upload', ['middleware' => 'photo.auth:write', 'uses' => 'Api\PhotoController@Upload']);
 Route::post('/photo/update', ['middleware' => ['photo.auth:write', 'photo.meta.auth'], 'uses' => 'Api\PhotoController@Update']);
 Route::post('/photo/delete', ['middleware' => ['photo.auth:write', 'photo.meta.auth'], 'uses' => 'Api\PhotoController@DeletePhoto']);
+Route::get('/photo/{id}', ['middleware' => 'photo.auth:read', 'uses' => 'Api\PhotoController@GetByID']);
