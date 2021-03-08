@@ -21,7 +21,6 @@ class PhotoController extends Controller
         $rules = array(
             'page' => 'required|filled|integer|min:1',
         );
-        $pageIndex = $request->page;
         $postname = $request->header("name", "");
         $postToken = $request->header("token", "");
         $post = App\Post::GetPost($postname);
@@ -32,10 +31,12 @@ class PhotoController extends Controller
         } else if ($post) {
             if ($post->isViewable($postToken)) {
                 $id = $post->id;
+                $filter = $request->only(['minHeight', 'maxHeight', 'minWidth', 'maxWidth', 'minSize', 'maxSize', 'query', 'tags', 'pageSize','page']);
                 $jsonResponse["message"] = "Loaded";
                 $jsonResponse["code"] = 200;
-                $jsonResponse["result"] = App\PostMeta::Get($id, $pageIndex);
-                $jsonResponse["total"] = App\PostMeta::Total($id);
+                $result = App\PostMeta::Get($id, $filter);
+                $jsonResponse["result"] = $result['items'];
+                $jsonResponse["total"] = $result['total'];
             } else {
                 $jsonResponse["code"] = 401;
                 $jsonResponse["message"] = "Permission Denied";
